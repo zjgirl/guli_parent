@@ -1,10 +1,12 @@
 package com.atguigu.servicebase.handler;
 
 import com.atguigu.commonresult.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -25,6 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GuliException.class)
     @ResponseBody
     public Result error(GuliException e) {
+        log.error(e.getMessage());
         e.printStackTrace();
         return Result.error().status(e.getCode()).message(e.getMsg());
     }
