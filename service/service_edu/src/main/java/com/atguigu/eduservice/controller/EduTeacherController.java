@@ -3,15 +3,16 @@ package com.atguigu.eduservice.controller;
 
 import com.atguigu.commonresult.Result;
 import com.atguigu.eduservice.entity.EduTeacher;
+import com.atguigu.eduservice.entity.vo.TeacherQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javafx.scene.control.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Wrapper;
 import java.util.List;
 
 /**
@@ -54,6 +55,28 @@ public class EduTeacherController {
         Page<EduTeacher> page = new Page<>(current, size);
         //分页数据将封装到page对象中
         teacherService.page(page, null);
+        return Result.ok().data("total", page.getTotal()).data("records", page.getRecords());
+    }
+
+    @ApiOperation("条件查询带分页")
+    @PostMapping("pageTeacherCondition/{current}/{size}")
+    public Result pageTeacherCondition(@PathVariable Integer current, @PathVariable Integer size,
+                                       @RequestBody(required = false) TeacherQuery vo) {
+        Page<EduTeacher> page = new Page<>(current, size);
+        QueryWrapper<EduTeacher> wrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(vo.getName())) {
+            wrapper.like("name", vo.getName());
+        }
+        if (!StringUtils.isEmpty(vo.getLevel())) {
+            wrapper.eq("level", vo.getLevel());
+        }
+        if (!StringUtils.isEmpty(vo.getBegin())) {
+            wrapper.ge("gmt_create", vo.getBegin());
+        }
+        if (!StringUtils.isEmpty(vo.getEnd())) {
+            wrapper.le("gmt_create", vo.getEnd());
+        }
+        teacherService.page(page, wrapper);
         return Result.ok().data("total", page.getTotal()).data("records", page.getRecords());
     }
 
