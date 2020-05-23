@@ -14,4 +14,18 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return Result.error().message("哎呀，系统开小差啦，请稍后重试~~");
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    @ResponseBody
+    public Result error(NullPointerException e) {
+        e.printStackTrace();
+        return Result.error().message("哎呀，空指针错误啦~~");
+    }
+
+    @ExceptionHandler(GuliException.class)
+    @ResponseBody
+    public Result error(GuliException e) {
+        e.printStackTrace();
+        return Result.error().status(e.getCode()).message(e.getMsg());
+    }
 }
